@@ -61,6 +61,8 @@ by extracting features from pre-trained models.
 
 See [the repository](https://github.com/fostiropoulos/stream/tree/cvpr_release) for Stream dataset installation and usages.
 
+Download the extracted features for 83 datasets [here](https://deep.usc.edu/datasets/stream_feats.tar).
+
 ## Class-Incremental Learning
 
 We show on the Stream dataset with CLIP embedding that our method outperforms all other baselines in the Class-Incremental Learning scenario.

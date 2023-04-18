@@ -16,10 +16,9 @@ This repository is a benchmark of methods found in [FACIL](https://github.com/mm
 2. `pip install stream_benchmark`
 
 
-## Stream Feature Vectors
+## Stream Feature Vectors [Download](https://deep.usc.edu/datasets/stream_feats.tar)
 
-84 Datasets supported. For a detailed table:
-[Download](TODO)
+83 datasets supported in the Stream dataset. [The detailed table](https://github.com/fostiropoulos/stream/blob/cvpr_release/assets/DATASET_TABLE.md).
 
 ## Hyperparameters
 
