@@ -44,7 +44,6 @@ def fill_buffer(self, mem_buffer: Buffer, train_loader, t_idx: int) -> None:
         norm_trans = None
         if norm_trans is None:
             norm_trans = lambda x: x
-        # TODO
         classes_start, classes_end = self.task_start_idx[t_idx], self.task_start_idx[(t_idx+1)]
 
         # 2.1 Extract all features
@@ -159,7 +158,6 @@ class ICarl(BaseModel):
         :param task_idx: the task index
         :return: the differentiable loss value
         """
-        # TODO
         pc = self.task_start_idx[task_idx]
         if task_idx + 1 < len(self.task_start_idx):
             ac = self.task_start_idx[task_idx+1]
