@@ -11,7 +11,9 @@ This repository is a benchmark of methods found in [FACIL](https://github.com/mm
 
 ## Install
 
-`pip install stream_benchmark`
+1. Install the [Stream dataset](https://github.com/fostiropoulos/stream).
+
+2. `pip install stream_benchmark`
 
 
 ## Stream Feature Vectors
@@ -21,15 +23,17 @@ This repository is a benchmark of methods found in [FACIL](https://github.com/mm
 
 ## Hyperparameters
 
-Modify [hparams/defaults.json](hparams/defaults.json) for the number of `n_epochs` you want to train and the `batch_size` you want to use.
+Hyper-parameters are stored in [hparams/defaults.json](hparams/defaults.json) 
+with the reported values in their papers. 
+Modify the file for the number of `n_epochs` you want to train and the `batch_size` you want to use.
 
 ## Run a single method
 
 `python -m stream_benchmark.main --dataset_path {dataset_path} --model_name {model_name} --hparams hparams/defaults.json`
 
-for `model_name` support see below.
+For `model_name` support see below.
 
-## Run distributed many methods
+## Run multiple methods in distribution
 
 1. `ray stop`
 
@@ -38,8 +42,9 @@ for `model_name` support see below.
 
 3. `python -m stream_benchmark.distributed --dataset_path  {dataset_path} --num_gpus {num_gpus}`
 
-    **NOTE**:
-        `{num_gpus} = fractional number of GPU to use. Set this so that {GPU usage per experiment} * {num_gpus} < 1`
+**NOTE**:
+`{num_gpus}` is the fractional number of GPU to use.
+Set this so that `{GPU usage per experiment} * {num_gpus} < 1`
 
 
 
