@@ -47,7 +47,6 @@ class HAL(BaseModel):
             self.buffer.num_seen_examples = 0
             self.buffer.task_number = self.task_number
         # get anchors (provided that we are not loading the model
-        # TODO
         if len(self.anchors) < self.task_start_idx[self.task_number] :
             self.get_anchors(train_loader, task_start_idx)
             del self.phi
