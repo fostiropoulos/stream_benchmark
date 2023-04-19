@@ -16,7 +16,6 @@ def train_method(
     model_name: str,
     dataset_path: Path,
     hparams: Path,
-    feat_names,
     verbose=True,
 ):
     config = json.loads(hparams.read_text())
@@ -27,15 +26,13 @@ def train_method(
             batch_size,
             task_id=None,
             num_workers=0,
-            feats_name=feat_names,
         )
     else:
         dataset = SequentialStream(
             dataset_path,
             batch_size,
             task_id=0,
-            num_workers=10,
-            feats_name=feat_names,
+            num_workers=0,
         )
     verbose = verbose
     save_dir = save_path.joinpath(model_name, str(uuid.uuid4())[:4])
@@ -62,6 +59,5 @@ if __name__ == "__main__":
     args.add_argument("--model_name", required=True, type=str)
     args.add_argument("--dataset_path", required=True, type=Path)
     args.add_argument("--hparams", required=True, type=Path)
-    args.add_argument("--feat_names", required=False, type=str)
     kwargs = vars(args.parse_args())
     train_method(**kwargs)

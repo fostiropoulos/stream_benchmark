@@ -8,8 +8,8 @@ from stream_benchmark.models.__base_model import BaseModel
 
 
 class MAS(BaseModel):
-    name = 'mas'
-    description = 'Continual learning via MAS.'
+    name = "mas"
+    description = "Continual learning via MAS."
     link = "https://arxiv.org/abs/1711.09601"
 
     def __init__(self, backbone, loss, lr, batch_size, mas, **_):
@@ -17,8 +17,8 @@ class MAS(BaseModel):
 
         self.older_params = None
         self.importance = self.init_importance()
-        self.e_lambda = mas['e_lambda']
-        self.gamma = mas['gamma']
+        self.e_lambda = mas["e_lambda"]
+        self.gamma = mas["gamma"]
         self.batch_size = batch_size
 
     def penalty(self):
@@ -28,20 +28,35 @@ class MAS(BaseModel):
             penalty = 0
             for n, p in self.net.named_parameters():
                 if n in self.importance.keys():
-                    penalty += torch.sum(self.importance[n] * (p - self.older_params[n]).pow(2)) / 2
+                    penalty += (
+                        torch.sum(
+                            self.importance[n] * (p - self.older_params[n]).pow(2)
+                        )
+                        / 2
+                    )
             return penalty
 
     def init_importance(self):
-        return {n: torch.zeros(p.shape).to(self.device) for n, p in self.net.named_parameters()
-                if p.requires_grad and 'classifier' not in n}
+        return {
+            n: torch.zeros(p.shape).to(self.device)
+            for n, p in self.net.named_parameters()
+            if p.requires_grad and "classifier" not in n
+        }
+
+    def to(self, device):
+        super().to(device)
+        self.importance = {k: v.to(device) for k, v in self.importance.items()}
 
     def begin_task(self, *_):
         pass
 
     def end_task(self, train_loader, task_start_idx, *_):
         # get old params
-        self.older_params = {n: p.clone().detach() for n, p in self.net.named_parameters()
-                             if p.requires_grad and 'classifier' not in n}
+        self.older_params = {
+            n: p.clone().detach()
+            for n, p in self.net.named_parameters()
+            if p.requires_grad and "classifier" not in n
+        }
 
         # get param importance
         importance = self.init_importance()
@@ -67,10 +82,11 @@ class MAS(BaseModel):
         # merge fisher information
         for n in self.importance.keys():
             # As in original code: add prev and new
-            self.importance[n] = self.gamma * self.importance[n] + (1 - self.gamma) * importance[n]
+            self.importance[n] = (
+                self.gamma * self.importance[n] + (1 - self.gamma) * importance[n]
+            )
 
     def observe(self, inputs, labels, not_aug_inputs):
-
         self.optimizer.zero_grad()
         outputs = self.net(inputs)
         penalty = self.penalty()

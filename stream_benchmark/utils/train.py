@@ -106,4 +106,4 @@ class Logger:
             f"{prefix} val-loss {loss:.2f} val-acc for task: {task_name} ({task_num}) - \t [Class-IL]: {round(mean_acc_class_il,2)} %"
             f" \t [Task-IL]: {round(mean_acc_task_il,2)} %"
         )
-        self.info(msg, verbose=True)
+        self.info(msg, verbose=self.verbose)

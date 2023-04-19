@@ -41,9 +41,9 @@ class SI(BaseModel):
         if self.big_omega is None:
             self.big_omega = torch.zeros_like(self.net.get_params()).to(self.device)
 
-        self.big_omega += self.small_omega / (
-            (self.net.get_params().data - self.checkpoint) ** 2 + self.xi
-        )
+        self.big_omega += (self.small_omega / (
+            (self.net.get_params().data - self.checkpoint.to(self.device)) ** 2 + self.xi
+        ))
 
         # store parameters checkpoint and reset small_omega
         self.checkpoint = self.net.get_params().data.clone().to(self.device)

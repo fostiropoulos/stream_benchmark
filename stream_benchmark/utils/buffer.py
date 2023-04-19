@@ -35,10 +35,6 @@ def icarl_replay(self, train_loader, task_start_idx, val_set_split=0):
             AuxDataset(x, y),
             batch_size=self.batch_size,
             shuffle=True,
-            num_workers=5,
-            persistent_workers=True,
-            pin_memory=True,
-            prefetch_factor=3,
         )
     return dl
 
@@ -71,6 +67,7 @@ class Buffer:
         assert mode in ['ring', 'reservoir']
         self.buffer_size = buffer_size
         self.device = device
+        self.output_device = device
         self.num_seen_examples = 0
         self.functional_index = eval(mode)
         if mode == 'ring':
@@ -144,16 +141,16 @@ class Buffer:
                                   size=size, replace=False)
         if transform is None: transform = lambda x: x
         ret_tuple = (torch.stack([transform(ee.cpu())
-                            for ee in self.examples[choice]]).to(self.device),)
+                            for ee in self.examples[choice]]).to(self.output_device),)
         for attr_str in self.attributes[1:]:
             if hasattr(self, attr_str):
                 attr = getattr(self, attr_str)
-                ret_tuple += (attr[choice],)
+                ret_tuple += (attr[choice].to(self.output_device),)
 
         if not return_index:
             return ret_tuple
         else:
-            return (torch.tensor(choice).to(self.device), ) + ret_tuple
+            return (torch.tensor(choice).to(self.output_device), ) + ret_tuple
 
         return ret_tuple
 

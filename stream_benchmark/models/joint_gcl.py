@@ -39,7 +39,6 @@ class JointGCL(BaseModel):
         all_labels = torch.cat(self.old_labels)
 
         # train
-        # progress = tqdm(total=self.n_epochs * math.ceil(len(all_data) / self.batch_size))
         for e in range(self.n_epochs):
             rp = torch.randperm(len(all_data))
             for i in range(math.ceil(len(all_data) / self.batch_size)):
@@ -52,10 +51,6 @@ class JointGCL(BaseModel):
                 loss = self.loss(outputs, labels.long())
                 loss.backward()
                 self.optimizer.step()
-                # progress.set_description(
-                #     f"{e}/{self.n_epochs} loss: {loss.item():.4f}"
-                # )
-                # progress.update(1)
 
     def observe(self, inputs, labels, not_aug_inputs):
         self.old_data.append(inputs.data)

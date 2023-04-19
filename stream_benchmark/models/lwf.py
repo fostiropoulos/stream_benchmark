@@ -78,10 +78,6 @@ class Lwf(BaseModel):
                 AuxDataset(x, y, logits=logits),
                 batch_size=self.batch_size,
                 shuffle=True,
-                num_workers=5,
-                persistent_workers=True,
-                pin_memory=True,
-                prefetch_factor=3,
             )
         self.net.train()
 

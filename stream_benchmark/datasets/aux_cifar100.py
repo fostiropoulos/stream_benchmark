@@ -29,19 +29,11 @@ class AuxCIFAR100:
             aux_train_ds,
             batch_size=batch_size,
             shuffle=True,
-            num_workers=10,
-            persistent_workers=True,
-            pin_memory=True,
-            prefetch_factor=3,
         )
         self.test_loader = DataLoader(
             aux_test_ds,
             batch_size=batch_size,
             shuffle=False,
-            num_workers=10,
-            persistent_workers=True,
-            pin_memory=True,
-            prefetch_factor=3,
         )
 
     def make_ds(self):
@@ -49,10 +41,10 @@ class AuxCIFAR100:
 
         # use the full dataset as aux data, no need to split
         train_ds = Stream(
-            root_path=root_path, include=["cifar100"],  task_id = 0, return_feats=True, train=True
+            root_path=root_path, datasets=["cifar100"],  task_id = 0, feats_name="default", train=True
         )
         test_ds = Stream(
-            root_path=root_path, include=["cifar100"], task_id = 0,  return_feats=True, train=True
+            root_path=root_path, datasets=["cifar100"], task_id = 0,  feats_name="default", train=False
         )
         return train_ds, test_ds
 

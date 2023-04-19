@@ -23,6 +23,13 @@ class BaseModel(nn.Module, ABC):
     def device(self):
         return next(iter(self.net.parameters())).device
 
+    def to(self, device):
+        super().to(device)
+        if "device" in self.__dict__:
+            del self.__dict__["device"]
+        if hasattr(self, "buffer"):
+            self.buffer.output_device = device
+
     @property
     @abstractmethod
     def name(self) -> str:
@@ -42,7 +49,6 @@ class BaseModel(nn.Module, ABC):
         pass
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-
         return self.net(x)
 
     def reset_optim(self):

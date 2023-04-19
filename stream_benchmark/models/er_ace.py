@@ -28,8 +28,11 @@ class ErACE(BaseModel):
     def end_task(self, *_):
         self.task += 1
 
-    def observe(self, inputs, labels, not_aug_inputs):
+    def to(self, device):
+        super().to(device)
+        self.seen_so_far = self.seen_so_far.to(device)
 
+    def observe(self, inputs, labels, not_aug_inputs):
         present = labels.unique()
         self.seen_so_far = torch.cat([self.seen_so_far, present]).unique()
 

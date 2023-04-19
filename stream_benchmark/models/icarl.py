@@ -112,6 +112,10 @@ class ICarl(BaseModel):
         self.minibatch_size = minibatch_size
         self.batch_size = batch_size
 
+    def to(self, device):
+        super().to(device)
+        self.eye = self.eye.to(device)
+
     def forward(self, x):
         if self.class_means is None:
             with torch.no_grad():

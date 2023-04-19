@@ -1,4 +1,3 @@
-
 import torch.nn.functional as F
 from stream.main import Stream
 from torch.utils.data import DataLoader
@@ -14,7 +13,7 @@ include_ds = [
     'colorectal', 'concrete', 'core50', 'cub', 'deepweedsx', 'dermnet', 'dtd', 'electronic',
     'emnist', 'eurosat', 'event', 'face', 'fashion', 'fer2013', 'fgvc6', 'fish', 'flowers',
     'food101', 'freiburg', 'galaxy10', 'garbage', 'gtsrb', 'ham10000', 'handwritten', 'histaerial',
-    'inaturalist', 'indoor', 'intel', 'ip02', 'kermany2018', 'kvasircapsule', 'landuse', 
+    'inaturalist', 'indoor', 'intel', 'ip02', 'kermany2018', 'kvasircapsule', 'landuse',
     'lego', 'malacca', 'manga', 'minerals', 'office', 'oriset', 'oxford', 'pcam', 'places365',
     'planets', 'plantdoc', 'pneumonia', 'pokemon', 'products', 'resisc45', 'rice', 'rock',
     'rooms', 'rvl', 'santa', 'satellite', 'simpsons', 'sketch', 'sports', 'svhn', 'textures',
@@ -29,14 +28,13 @@ class SequentialStream:
         batch_size,
         task_id=0,
         num_workers=0,
-        feats_name=None,
     ) -> None:
         super().__init__()
         self.root_path = root_path
         self.task_id = task_id
         self.batch_size = batch_size
         self.num_workers = num_workers
-        self.feats_name = feats_name
+        self.feats_name = "default"
         self.image_size = 224
         self.val_image_size = 224
         mock_ds: Stream = self.make_ds(task_id, True)
@@ -46,14 +44,7 @@ class SequentialStream:
         self.task_start_idx = [0] + list(mock_ds.task_end_idxs)
         self.task_end_idx = self.task_start_idx[1:]  # list(mock_ds.task_end_idxs)
         self.head_size = self.task_start_idx[-1]
-        if self.feats_name is None:
-            pass
-        elif self.feats_name == "clip":
-            self.feat_size = 768  # mock_ds[0][0].shape[0]
-        elif self.feats_name == "vit":
-            self.feat_size = 1024  # mock_ds[0][0].shape[0]
-        elif self.feats_name == "resnet":
-            self.feat_size = 2048  # mock_ds[0][0].shape[0]
+        self.feat_size = 768
         self.n_tasks = len(self.task_end_idx)
         self.test_loaders = [self.test_dataloader()]
 
@@ -91,7 +82,6 @@ class SequentialStream:
             train=train,
             transform=transform,
             datasets=include_ds,
-            # process = True,
         )
         return s
 
@@ -106,9 +96,8 @@ class SequentialStream:
             batch_size=self.batch_size,
             shuffle=shuffle,
             num_workers=self.num_workers,
-            pin_memory=True,
             drop_last=train,
-            **kwargs
+            **kwargs,
         )
         return loader
 
