@@ -5,7 +5,7 @@
 <p style="text-align:center"> University of Southern California</p>
 
 <p style="text-align:center"> 
-<a href="">[Arxiv]</a> 
+<a href="">[arXiv]</a> 
 &nbsp;&nbsp;&nbsp; 
 <a href="https://github.com/fostiropoulos/stream_benchmark">[Code]</a>  
 &nbsp;&nbsp;&nbsp; 
@@ -61,7 +61,7 @@ by extracting features from pre-trained models.
 
 See [the repository](https://github.com/fostiropoulos/stream/tree/cvpr_release) for Stream dataset installation and usages.
 
-Download the extracted features for 83 datasets [here](https://deep.usc.edu/datasets/stream_feats.tar).
+Download the extracted features for Stream datasets [here](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view).
 
 ## Class-Incremental Learning
 

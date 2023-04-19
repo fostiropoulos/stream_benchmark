@@ -1,6 +1,8 @@
 # Stream Benchmark
 
-The code was used for the experiments and results of [Batch-Model-Consolidation](arxivlink). If using this code please cite:
+The code was used for the experiments and results of 
+**Batch-Model-Consolidation** [arXiv](arxivlink) [Website](https://fostiropoulos.github.io/stream_benchmark/). 
+If using this code please cite:
 
 ```
 pass
