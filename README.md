@@ -1,6 +1,8 @@
 # Stream Benchmark
 
-The code was used for the experiments and results of [Batch-Model-Consolidation](arxivlink). If using this code please cite:
+The code was used for the experiments and results of 
+**Batch-Model-Consolidation** [[arXiv]](arxivlink) [[Website]](https://fostiropoulos.github.io/stream_benchmark/). 
+If using this code please cite:
 
 ```
 pass
@@ -12,13 +14,15 @@ This repository is a benchmark of methods found in [FACIL](https://github.com/mm
 ## Install
 
 1. Install the [Stream dataset](https://github.com/fostiropoulos/stream).
+2. `git clone https://github.com/fostiropoulos/stream_benchmark.git`
+3. `cd stream_benchmark`
+4. `pip install . stream_benchmark`
 
-2. `pip install stream_benchmark`
 
+## Stream Feature Vectors [Download](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view)
 
-## Stream Feature Vectors [Download](https://deep.usc.edu/datasets/stream_feats.tar)
-
-83 datasets supported in the Stream dataset. [The detailed table](https://github.com/fostiropoulos/stream/blob/cvpr_release/assets/DATASET_TABLE.md).
+We use 71 datasets with extracted features from pre-trained models, 
+supported in the Stream dataset. [The detailed table](https://github.com/fostiropoulos/stream/blob/cvpr_release/assets/DATASET_TABLE.md).
 
 ## Hyperparameters
 
@@ -28,8 +32,12 @@ Modify the file for the number of `n_epochs` you want to train and the `batch_si
 
 ## Run a single method
 
-`python -m stream_benchmark.main --dataset_path {dataset_path} --model_name {model_name} --hparams hparams/defaults.json`
+```
+python -m stream_benchmark --save_path {save_path} --dataset_path {dataset_path} --model_name {model_name} --hparams hparams/defaults.json --feats_name {feats_name}
+```
 
+`feats_name` is the extracted features to use in the Stream dataset.
+Supported features `clip`, `vit`, and `resnet`.
 For `model_name` support see below.
 
 ## Run multiple methods in distribution

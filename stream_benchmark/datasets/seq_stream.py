@@ -8,6 +8,19 @@ from stream_benchmark.backbone.MLP import ResMLP
 from stream_benchmark.backbone.resnet import ResNet
 
 
+include_ds = [
+    'aircraft', 'apparel', 'aptos2019', 'art', 'asl', 'boat', 'cars', 'cataract', 'celeba',
+    'colorectal', 'concrete', 'core50', 'cub', 'deepweedsx', 'dermnet', 'dtd', 'electronic',
+    'emnist', 'eurosat', 'event', 'face', 'fashion', 'fer2013', 'fgvc6', 'fish', 'flowers',
+    'food101', 'freiburg', 'galaxy10', 'garbage', 'gtsrb', 'ham10000', 'handwritten', 'histaerial',
+    'inaturalist', 'indoor', 'intel', 'ip02', 'kermany2018', 'kvasircapsule', 'landuse',
+    'lego', 'malacca', 'manga', 'minerals', 'office', 'oriset', 'oxford', 'pcam', 'places365',
+    'planets', 'plantdoc', 'pneumonia', 'pokemon', 'products', 'resisc45', 'rice', 'rock',
+    'rooms', 'rvl', 'santa', 'satellite', 'simpsons', 'sketch', 'sports', 'svhn', 'textures',
+    'vegetable', 'watermarked', 'weather', 'zalando',
+]
+
+
 class SequentialStream:
     def __init__(
         self,
@@ -68,6 +81,7 @@ class SequentialStream:
             feats_name=self.feats_name,
             train=train,
             transform=transform,
+            datasets=include_ds,
         )
         return s
 
