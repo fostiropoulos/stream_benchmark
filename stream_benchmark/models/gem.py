@@ -120,6 +120,10 @@ class Gem(BaseModel):
                 dtype=torch.long).to(self.device) * (self.current_task - 1)
             )
 
+    def to(self, device):
+        super().to(device)
+        self.grads_da = self.grads_da.to(device)
+
 
     def observe(self, inputs, labels, not_aug_inputs):
 

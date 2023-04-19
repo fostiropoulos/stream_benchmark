@@ -16,6 +16,7 @@ class Buffer:
     def __init__(self, buffer_size, device, minibatch_size, model=None):
         self.buffer_size = buffer_size
         self.device = device
+        self.output_device = device
         self.num_seen_examples = 0
         self.attributes = ['examples', 'labels']
         self.model = model
@@ -140,11 +141,11 @@ class Buffer:
                 self.fathom = 0
         if transform is None: transform = lambda x: x
         ret_tuple = (torch.stack([transform(ee.cpu())
-                            for ee in self.examples[choice]]).to(self.device),)
+                            for ee in self.examples[choice]]).to(self.output_device),)
         for attr_str in self.attributes[1:]:
             if hasattr(self, attr_str):
                 attr = getattr(self, attr_str)
-                ret_tuple += (attr[choice],)
+                ret_tuple += (attr[choice].to(self.output_device),)
         if give_index:
             ret_tuple += (choice,)
 
@@ -167,7 +168,7 @@ class Buffer:
         """
         if transform is None: transform = lambda x: x
         ret_tuple = (torch.stack([transform(ee.cpu())
-                            for ee in self.examples]).to(self.device),)
+                            for ee in self.examples]).to(self.output_device),)
         for attr_str in self.attributes[1:]:
             if hasattr(self, attr_str):
                 attr = getattr(self, attr_str)
