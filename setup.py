@@ -22,7 +22,7 @@ setup(
         "quadprog==0.1.11",
         "pandas==2.0.0",
         "tabulate==0.9.0",
-        "https://github.com/fostiropoulos/stream.git",
+        "stream @ git+https://github.com/fostiropoulos/stream.git",
     ],
     extras_require={
         "dev": [
