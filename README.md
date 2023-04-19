@@ -33,11 +33,10 @@ Modify the file for the number of `n_epochs` you want to train and the `batch_si
 ## Run a single method
 
 ```
-python -m stream_benchmark --save_path {save_path} --dataset_path {dataset_path} --model_name {model_name} --hparams hparams/defaults.json --feats_name {feats_name}
+python -m stream_benchmark --save_path {save_path} --dataset_path {dataset_path} --model_name {model_name} --hparams hparams/defaults.json
 ```
 
-`feats_name` is the extracted features to use in the Stream dataset.
-Supported features `clip`, `vit`, and `resnet`.
+We run the baselines on Stream with [CLIP](https://arxiv.org/abs/2103.00020) embeddings in this code.
 For `model_name` support see below.
 
 ## Run multiple methods in distribution
@@ -45,7 +44,6 @@ For `model_name` support see below.
 1. `ray stop`
 
 2. `ray start --head`
-
 
 3. `python -m stream_benchmark.distributed --dataset_path  {dataset_path} --num_gpus {num_gpus}`
 
