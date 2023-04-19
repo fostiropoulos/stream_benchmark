@@ -75,7 +75,6 @@ def train_joint(
     model.net.to(model.device)
     chkpt = save_dir.joinpath("results.pt")
     logger = Logger(path=save_dir.joinpath("train.log"), verbose=verbose)
-    # current_task = 0
     t = 0
     begin_task_duration = defaultdict(list)
     end_task_duration = defaultdict(list)
@@ -102,7 +101,6 @@ def train_joint(
         loader = tqdm(total=n_epochs * len(train_loader))
     for epoch in range(n_epochs):
         for i, data in enumerate(train_loader):
-            # break
             (inputs, labels), index = data
             task_offset = torch.gather(
                 task_start_idx, 0, (dataset_lens > index[:, None]).long().argmax(-1)

@@ -78,7 +78,6 @@ def train(
     model.net.to(model.device)
     chkpt = save_dir.joinpath("results.pt")
     logger = Logger(path=save_dir.joinpath("train.log"), verbose=verbose)
-    # current_task = 0
     begin_task_duration = defaultdict(list)
     end_task_duration = defaultdict(list)
     observe_task_duration = defaultdict(lambda: defaultdict(list))
@@ -108,7 +107,6 @@ def train(
             loader = tqdm(total=n_epochs * len(train_loader))
         for epoch in range(n_epochs):
             for i, data in enumerate(train_loader):
-                # break
                 if hasattr(train_loader.dataset, "logits"):
                     inputs, labels, logits = data
                     labels = task_start_idx + labels

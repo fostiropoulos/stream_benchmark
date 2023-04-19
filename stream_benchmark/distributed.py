@@ -1,22 +1,29 @@
 import argparse
+import multiprocessing as mp
 import traceback
 from pathlib import Path
 
 import ray
+import torch
 
 from stream_benchmark.__main__ import train_method
 from stream_benchmark.models import get_all_models
-
 from stream_benchmark.utils.train import Logger
 
 IGNORE_MODELS = []
 
-INCLUDE_MODELS = []
+INCLUDE_MODELS = None
 
 
-def main(save_dir: Path, dataset_path: Path, num_cpus=0.001, num_gpus=0.15):
-    logger = Logger(path=save_dir.joinpath("run.log"), verbose=True)
-    model_names = get_all_models() if INCLUDE_MODELS is None else INCLUDE_MODELS
+def main(
+    save_path: Path, dataset_path: Path, hparams: Path, num_cpus=0.001, num_gpus=0.15
+):
+    logger = Logger(path=save_path.joinpath("run.log"), verbose=True)
+    model_names = (
+        get_all_models()
+        if INCLUDE_MODELS is None or len(INCLUDE_MODELS) == 0
+        else INCLUDE_MODELS
+    )
     model_names = set(model_names)
     model_names = model_names.difference(IGNORE_MODELS)
     remotes = []
@@ -30,9 +37,10 @@ def main(save_dir: Path, dataset_path: Path, num_cpus=0.001, num_gpus=0.15):
     def remote_fn(model_name):
         try:
             train_method(
-                save_path=save_dir,
+                save_path=save_path,
                 model_name=model_name,
                 dataset_path=dataset_path,
+                hparams=hparams,
                 verbose=False,
             )
         except Exception as e:
@@ -45,9 +53,12 @@ def main(save_dir: Path, dataset_path: Path, num_cpus=0.001, num_gpus=0.15):
 
 
 if __name__ == "__main__":
+    torch.multiprocessing.set_start_method("spawn")
+    mp.set_start_method("spawn", force=True)
     args = argparse.ArgumentParser()
+    args.add_argument("--save_path", required=True, type=Path)
     args.add_argument("--dataset_path", required=True, type=Path)
-    args.add_argument("--save_dir", required=True, type=Path)
+    args.add_argument("--hparams", required=True, type=Path)
     args.add_argument(
         "--num_cpus",
         default=0.001,
