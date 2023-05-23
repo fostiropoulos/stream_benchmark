@@ -11,7 +11,12 @@ from tqdm import tqdm
 
 from stream_benchmark.datasets import SequentialStream
 from stream_benchmark.models.__base_model import BaseModel
-from stream_benchmark.utils.train import Logger, mask_classes
+from stream_benchmark.utils.train import (
+    Logger,
+    mask_classes,
+    timeit,
+    reset_optim_scheduler,
+)
 
 
 def evaluate(
@@ -48,20 +53,6 @@ def evaluate(
     val_loss = np.mean(losses)
     model.net.train(status)
     return cil_acc, til_acc, val_loss
-
-
-def timeit(func, *args, **kwargs):
-    start = time.time()
-    result = func(*args, **kwargs)
-    end = time.time()
-    return result, end - start
-
-
-def reset_optim_scheduler(model: BaseModel, patience, threshold, verbose=True):
-    model.reset_optim()
-    return ReduceLROnPlateau(
-        model.optimizer, "min", threshold=threshold, patience=patience, verbose=verbose
-    )
 
 
 def train(

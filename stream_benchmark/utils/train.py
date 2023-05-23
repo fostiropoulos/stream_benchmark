@@ -1,14 +1,48 @@
+import math
+import os
+import random
+import time
 from datetime import datetime
 from pathlib import Path
+
 import numpy as np
-
 import torch
-import os
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 from stream_benchmark.datasets import SequentialStream
-import random
+from stream_benchmark.models.__base_model import BaseModel
+
+from torch.utils.data import ConcatDataset, DataLoader, Dataset, Subset
 
 
+def mixup_data(x, y, coef=0.2):
+    """Returns mixed inputs, pairs of targets, and lambda"""
+    # lam -> 1 implies no augmentation
+    lower = 1 - coef
+    lam = np.random.uniform(lower, 1)
 
+    batch_size = x.size()[0]
+
+    index = torch.randperm(batch_size, device=x.device)
+
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+    return mixed_x, y_a, y_b, lam
+
+
+def timeit(func, *args, **kwargs):
+    start = time.time()
+    result = func(*args, **kwargs)
+    end = time.time()
+    return result, end - start
+
+
+def reset_optim_scheduler(model: BaseModel, patience, threshold, verbose=True):
+    model.reset_optim()
+    return ReduceLROnPlateau(
+        model.optimizer, "min", threshold=threshold, patience=patience, verbose=verbose
+    )
 
 
 def mask_classes(outputs: torch.Tensor, dataset: SequentialStream, k: int) -> None:
@@ -82,7 +116,6 @@ class Logger:
 
         with open(path, mode, encoding="utf-8") as f:
             f.write(f"Starting Logger {now} \n")
-
 
     def write_score(
         self,

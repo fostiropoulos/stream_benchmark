@@ -17,7 +17,7 @@ class BaseModel(nn.Module, ABC):
         self.net = backbone
         self.loss = loss
         self.lr = lr
-        self.optimizer = AdamW(self.net.parameters(), lr=self.lr)
+        self.optimizer = SGD(self.net.parameters(), lr=self.lr)
 
     @cached_property
     def device(self):
