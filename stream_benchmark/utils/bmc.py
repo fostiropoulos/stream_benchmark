@@ -72,7 +72,7 @@ def slice_mixed_task_logits(logits, y, task_offset, task_len):
     if task_offset.max() != task_offset.min():
         end_idx = task_offset.max() + task_len[task_offset.argmax()]
         start_idx = task_offset.min()
-        _y = copy.deepcopy(y) - start_idx
+        _y = copy.deepcopy(y)
         return [(masked_logits[:, start_idx:end_idx], _y)]
     else:
         _task_offset = task_offset[0].item()
