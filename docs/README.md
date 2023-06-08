@@ -5,7 +5,7 @@
 <p style="text-align:center"> University of Southern California</p>
 
 <p style="text-align:center">
-<a href="">[arXiv]</a>
+<a href="https://openaccess.thecvf.com/content/CVPR2023/papers/Fostiropoulos_Batch_Model_Consolidation_A_Multi-Task_Model_Consolidation_Framework_CVPR_2023_paper.pdf">[arXiv]</a>
 &nbsp;&nbsp;&nbsp;
 <a href="https://github.com/fostiropoulos/stream_benchmark">[Code]</a>
 &nbsp;&nbsp;&nbsp;

@@ -1,7 +1,7 @@
 # Stream Benchmark
 
 The code was used for the experiments and results of
-**Batch-Model-Consolidation** [[arXiv]](arxivlink) [[Website]](https://fostiropoulos.github.io/stream_benchmark/).
+**Batch-Model-Consolidation** [[arXiv]](https://openaccess.thecvf.com/content/CVPR2023/papers/Fostiropoulos_Batch_Model_Consolidation_A_Multi-Task_Model_Consolidation_Framework_CVPR_2023_paper.pdf) [[Website]](https://fostiropoulos.github.io/stream_benchmark/).
 If using this code please cite:
 
 ```
