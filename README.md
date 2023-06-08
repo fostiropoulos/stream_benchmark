@@ -1,11 +1,17 @@
 # Stream Benchmark
 
-The code was used for the experiments and results of 
-**Batch-Model-Consolidation** [[arXiv]](arxivlink) [[Website]](https://fostiropoulos.github.io/stream_benchmark/). 
+The code was used for the experiments and results of
+**Batch-Model-Consolidation** [[arXiv]](arxivlink) [[Website]](https://fostiropoulos.github.io/stream_benchmark/).
 If using this code please cite:
 
 ```
-pass
+@inproceedings{fostiropoulos2023batch,
+  title={Batch Model Consolidation: A Multi-Task Model Consolidation Framework},
+  author={Fostiropoulos, Iordanis and Zhu, Jiaye and Itti, Laurent},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={3664--3676},
+  year={2023}
+}
 ```
 This repository is a benchmark of methods found in [FACIL](https://github.com/mmasana/FACIL) and [Mammoth](https://github.com/aimagelab/mammoth) combined and adapted to work with the [Stream](https://github.com/fostiropoulos/stream) dataset.
 
@@ -21,13 +27,13 @@ This repository is a benchmark of methods found in [FACIL](https://github.com/mm
 
 ## Stream Feature Vectors [Download](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view)
 
-We use 71 datasets with extracted features from pre-trained models, 
+We use 71 datasets with extracted features from pre-trained models,
 supported in the Stream dataset. [The detailed table](https://github.com/fostiropoulos/stream/blob/cvpr_release/assets/DATASET_TABLE.md).
 
 ## Hyperparameters
 
-Hyper-parameters are stored in [hparams/defaults.json](hparams/defaults.json) 
-with the reported values in their papers. 
+Hyper-parameters are stored in [hparams/defaults.json](hparams/defaults.json)
+with the reported values in their papers.
 Modify the file for the number of `n_epochs` you want to train and the `batch_size` you want to use.
 
 ## Run a single method
