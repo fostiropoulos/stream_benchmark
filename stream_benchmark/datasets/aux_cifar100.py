@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from stream.main import Stream
 from torch.utils.data import DataLoader, Dataset
+from autods.main import AutoDS
 
 
 class AuxDataset(Dataset):
@@ -40,14 +40,21 @@ class AuxCIFAR100:
         root_path = Path(self.dataset_path)
 
         # use the full dataset as aux data, no need to split
-        train_ds = Stream(
-            root_path=root_path, datasets=["cifar100"],  task_id = 0, feats_name="default", train=True
+        train_ds = AutoDS(
+            root_path=root_path,
+            datasets=["cifar100"],
+            task_id=0,
+            feats_name="default",
+            train=True,
         )
-        test_ds = Stream(
-            root_path=root_path, datasets=["cifar100"], task_id = 0,  feats_name="default", train=False
+        test_ds = AutoDS(
+            root_path=root_path,
+            datasets=["cifar100"],
+            task_id=0,
+            feats_name="default",
+            train=False,
         )
         return train_ds, test_ds
-
 
     def get_data_loaders(self):
         return self.train_loader, self.test_loader

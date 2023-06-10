@@ -4,33 +4,33 @@
 <h3 style="text-align:center"> Iordanis Fostiropoulos &nbsp;&nbsp;&nbsp; Jiaye Zhu &nbsp;&nbsp;&nbsp; Laurent Itti</h3>
 <p style="text-align:center"> University of Southern California</p>
 
-<p style="text-align:center"> 
-<a href="">[arXiv]</a> 
-&nbsp;&nbsp;&nbsp; 
-<a href="https://github.com/fostiropoulos/stream_benchmark">[Code]</a>  
-&nbsp;&nbsp;&nbsp; 
-<a href="https://github.com/fostiropoulos/stream">[Dataset]</a> 
+<p style="text-align:center">
+<a href="https://openaccess.thecvf.com/content/CVPR2023/papers/Fostiropoulos_Batch_Model_Consolidation_A_Multi-Task_Model_Consolidation_Framework_CVPR_2023_paper.pdf">[arXiv]</a>
+&nbsp;&nbsp;&nbsp;
+<a href="https://github.com/fostiropoulos/stream_benchmark">[Code]</a>
+&nbsp;&nbsp;&nbsp;
+<a href="https://github.com/fostiropoulos/auto-dataset">[Dataset]</a>
 </p>
 
 ## Abstract
 
-In Continual Learning (CL), a model is required to learn a stream of tasks sequentially 
-without significant performance degradation on previously learned tasks. 
-Current approaches fail for a long sequence of tasks from diverse domains and difficulties. 
-Many of the existing CL approaches are difficult to apply in practice due to excessive memory 
-cost or training time, or are tightly coupled to a single device. With the intuition 
-derived from the widely applied mini-batch training, we propose Batch Model Consolidation 
-(**BMC**) to support more realistic CL under conditions where multiple agents are 
-exposed to a range of tasks. During a _regularization_ phase, BMC trains multiple 
-_expert models_ in parallel on a set of disjoint tasks. Each expert maintains weight 
-similarity to a _base model_ through a _stability loss_, and constructs a 
-_buffer_ from a fraction of the task's data. During the _consolidation_ phase, 
-combine the learned knowledge on `batches' of _expert models_ using a 
-_batched consolidation loss_ in _memory_ data that aggregates all buffers. 
-We thoroughly evaluate each component of our method in an ablation study and demonstrate 
-the effectiveness on standardized benchmark datasets Split-CIFAR-100, Tiny-ImageNet, 
-and the Stream dataset composed of 71 image classification tasks from diverse domains 
-and difficulties. Our method outperforms the next best CL approach by 70% and is the 
+In Continual Learning (CL), a model is required to learn a stream of tasks sequentially
+without significant performance degradation on previously learned tasks.
+Current approaches fail for a long sequence of tasks from diverse domains and difficulties.
+Many of the existing CL approaches are difficult to apply in practice due to excessive memory
+cost or training time, or are tightly coupled to a single device. With the intuition
+derived from the widely applied mini-batch training, we propose Batch Model Consolidation
+(**BMC**) to support more realistic CL under conditions where multiple agents are
+exposed to a range of tasks. During a _regularization_ phase, BMC trains multiple
+_expert models_ in parallel on a set of disjoint tasks. Each expert maintains weight
+similarity to a _base model_ through a _stability loss_, and constructs a
+_buffer_ from a fraction of the task's data. During the _consolidation_ phase,
+combine the learned knowledge on `batches' of _expert models_ using a
+_batched consolidation loss_ in _memory_ data that aggregates all buffers.
+We thoroughly evaluate each component of our method in an ablation study and demonstrate
+the effectiveness on standardized benchmark datasets Split-CIFAR-100, Tiny-ImageNet,
+and the Stream dataset composed of 71 image classification tasks from diverse domains
+and difficulties. Our method outperforms the next best CL approach by 70% and is the
 only approach that can maintain performance at the end of 71 tasks.
 
 ## Overview
@@ -42,24 +42,24 @@ Intuition: similar to mini-batch training, batched task training can reduce the 
 </p>
 
 BMC optimizes multiple expert models from a single base model in parallel on **different** tasks,
-enforcing parameter-isolation. Experts are regularized during training to reduce the forgetting 
+enforcing parameter-isolation. Experts are regularized during training to reduce the forgetting
 on tasks learned by base model. A new base model is consolidated by **batched distillation** from the experts.
 
 ![A single incremental step of BMC](https://drive.google.com/uc?export=view&id=1nG4kD2PCP0sMZxBRD3LN8fZjzYvQrpTJ)
 
-BMC supports distributed training where experts are trained locally on remote devices. 
-Artifacts are sent back to the central device for consolidation training. 
+BMC supports distributed training where experts are trained locally on remote devices.
+Artifacts are sent back to the central device for consolidation training.
 The parallelism of this framework enables BMC to learn long task sequences efficiently.
 
 ![Paralleled multi-expert training framework](https://drive.google.com/uc?export=view&id=1NAswFVQtiNn6xkilUig42guGfvi-babV)
 
-## The Stream Dataset
+## Auto-Dataset
 
-Stream dataset implements the logic for processing and managing a large sequence of datasets, 
+AutoDS implements the logic for processing and managing a large sequence of datasets,
 and provides a method to train on interdisciplinary tasks by projecting all datasets on the same dimension,
 by extracting features from pre-trained models.
 
-See [the repository](https://github.com/fostiropoulos/stream/tree/cvpr_release) for Stream dataset installation and usages.
+See [the repository](https://github.com/fostiropoulos/auto-dataset/) for dataset installation and usages.
 
 Download the extracted features for Stream datasets [here](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view).
 
@@ -74,6 +74,12 @@ Our implementation of BMC as well as the baselines can be found [here](https://g
 
 ## Citation
 
-```
-
+```bibtex
+@inproceedings{fostiropoulos2023batch,
+  title={Batch Model Consolidation: A Multi-Task Model Consolidation Framework},
+  author={Fostiropoulos, Iordanis and Zhu, Jiaye and Itti, Laurent},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={3664--3676},
+  year={2023}
+}
 ```

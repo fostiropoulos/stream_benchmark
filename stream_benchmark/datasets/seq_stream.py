@@ -1,5 +1,5 @@
 import torch.nn.functional as F
-from stream.main import Stream
+from autods.main import AutoDS
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import ConcatDataset
 from torchvision import transforms
@@ -37,7 +37,7 @@ class SequentialStream:
         self.feats_name = "default"
         self.image_size = 224
         self.val_image_size = 224
-        mock_ds: Stream = self.make_ds(task_id, True)
+        mock_ds: AutoDS = self.make_ds(task_id, True)
         if isinstance(mock_ds.dataset, ConcatDataset):
             self.dataset_len = [len(ds) for ds in mock_ds.dataset.datasets]
 
@@ -75,7 +75,7 @@ class SequentialStream:
         if self.feats_name is None:
             transform = self.transforms(train)
 
-        s = Stream(
+        s = AutoDS(
             self.root_path,
             task_id=task_id,
             feats_name=self.feats_name,

@@ -1,5 +1,6 @@
 import copy
 import io
+import json
 import logging
 import shutil
 import tempfile
@@ -9,18 +10,33 @@ from unittest import mock
 
 import numpy as np
 import torch
+from autods.dataset import Dataset
+from autods.main import AutoDS
+from autods.utils import extract
 from PIL import Image
-from stream.dataset import Dataset
-from stream.main import Stream
-from stream.utils import extract
 
 from stream_benchmark.__main__ import train_method
+from stream_benchmark.datasets.seq_stream import include_ds
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+MAKE_FEATS_BATCH_SIZE = 500
+include_ds = ["mock1", "mock2", "mock3"]
+hparams = {
+    "early_stopping_patience": 10,
+    "batch_size": 64,
+    "buffer_size": 10000,
+    "lr": 0.1,
+    "minibatch_size": 64,
+    "n_epochs": 20,
+    "scheduler_threshold": 1e-4,
+    "scheduler_patience": 10,
+    "device": "cuda",
+    "sgd": {},
+}
 
 
 class MockDataset(Dataset):
-    metadata_url = "https://iordanis.xyz/"
+    metadata_url = "https://iordanis.me/"
     remote_urls = {"mock.tar": None}
     name = "mock"
     file_hash_map = {"mock.tar": "blahblah"}
@@ -60,9 +76,7 @@ class MockDataset(Dataset):
                 kwargs["action"] = "process"
         super().__init__(*args, **kwargs)
         if mock_download:
-            self.make_features(500, "cuda","clip")
-
-    # ds.make_features(1024, DEVICE, clean=True, feature_extractor="clip")
+            self.make_features(MAKE_FEATS_BATCH_SIZE, DEVICE, "clip")
 
     def _process(self, raw_data_dir: Path):
         archive_path = raw_data_dir.joinpath("mock.tar")
@@ -87,35 +101,61 @@ class MockDataset(Dataset):
         torch.save(metadata, self.metadata_path)
 
 
-class MockDataset2(MockDataset):
-    name = "mock2"
-    pass
+datasets = []
+for ds in include_ds:
+
+    class _MockClass(MockDataset):
+        pass
+
+    _MockClass.__name__ = ds.upper()
+    _MockClass.name = ds
+    datasets.append(_MockClass)
+
+sizes = (np.arange(len(datasets)) + 1) * 100
 
 
-class MockDataset3(MockDataset):
-    name = "mock3"
-    pass
+def make_ds(self, task_id, train):
 
-class MockDataset4(MockDataset):
-    name = "mock4"
-    pass
-
-def test_benchmark(tmp_path: Path):
-    datasets = [MockDataset, MockDataset2, MockDataset3, MockDataset4]
-    sizes = (np.arange(len(datasets)) + 1) * 100
     with mock.patch(
-        "stream.main.Stream.supported_datasets",
+        "autods.main.AutoDS.supported_datasets",
         return_value=datasets,
     ):
-        for ds, size in zip(datasets, sizes):
-            ds(tmp_path, size=size, mock_download=True)
 
-        with mock.patch(
-            "stream.dataset.Dataset.assert_downloaded", return_value=True
-        ), mock.patch("stream.dataset.Dataset.verify_downloaded", return_value=True):
-            train_method(tmp_path, "sgd", tmp_path, "clip")
-        breakpoint()
-        return
+        transform = None
+        if self.feats_name is None:
+            transform = self.transforms(train)
+
+        s = AutoDS(
+            self.root_path,
+            task_id=task_id,
+            feats_name=self.feats_name,
+            train=train,
+            transform=transform,
+            datasets=include_ds,
+        )
+    return s
+
+
+def test_benchmark(tmp_path: Path):
+
+    hpp = tmp_path.joinpath("hparams.json")
+    hpp.write_text(json.dumps(hparams))
+
+    for ds, size in zip(datasets, sizes):
+        ds(tmp_path, size=size, mock_download=True)
+
+    with mock.patch(
+        "stream_benchmark.datasets.seq_stream.SequentialStream.make_ds", make_ds
+    ), mock.patch(
+        "autods.dataset.Dataset.assert_downloaded", return_value=True
+    ), mock.patch(
+        "autods.dataset.Dataset.verify_downloaded", return_value=True
+    ):
+        train_method(
+            save_path=tmp_path, model_name="sgd", dataset_path=tmp_path, hparams=hpp
+        )
+    breakpoint()
+    return
 
 
 if __name__ == "__main__":
