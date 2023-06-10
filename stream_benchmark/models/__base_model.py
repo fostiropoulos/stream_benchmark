@@ -17,7 +17,7 @@ class BaseModel(nn.Module, ABC):
         self.net = backbone
         self.loss = loss
         self.lr = lr
-        self.optimizer = SGD(self.net.parameters(), lr=self.lr)
+        self.optimizer = AdamW(self.net.parameters(), lr=self.lr)
 
     @cached_property
     def device(self):
@@ -52,7 +52,7 @@ class BaseModel(nn.Module, ABC):
         return self.net(x)
 
     def reset_optim(self):
-        self.optimizer = SGD(self.net.parameters(), lr=self.lr)
+        self.optimizer = AdamW(self.net.parameters(), lr=self.lr)
 
     @abstractmethod
     def begin_task(self):

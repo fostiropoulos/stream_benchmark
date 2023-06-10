@@ -2,7 +2,7 @@
    "early_stopping_patience": 10,
    "batch_size": 64,
    "buffer_size": 10000,
-   "lr": 0.1,
+   "lr": 0.01,
    "minibatch_size": 64,
    "n_epochs": 20,
    "scheduler_threshold": 1e-4,

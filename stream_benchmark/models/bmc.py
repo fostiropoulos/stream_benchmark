@@ -16,7 +16,7 @@ from stream_benchmark.utils.bmc import (
 from stream_benchmark.utils.train import mixup_data, reset_optim_scheduler
 
 from torch.optim import SGD, AdamW
-from stream.main import Stream
+from autods.main import AutoDS
 
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
@@ -47,7 +47,7 @@ class BMC(BaseModel):
         task_len,
     ):
         # if self.training:
-
+        y = copy.deepcopy(y) + task_offset
         if self.base_model.training:
             x, y_a, y_b, lam = mixup_data(x, y, 0.4)
         else:
@@ -73,8 +73,8 @@ class BMC(BaseModel):
         ce_loss = lam * ce_loss_a + (1 - lam) * ce_loss_b
 
         loss = ce_loss * self.task_coef
-        if self.distil_coef > 0:
-            loss += F.mse_loss(base_feats, feats).sum() * self.distil_coef
+        # if self.distil_coef > 0:
+        #     loss += F.mse_loss(base_feats, feats).sum() * self.distil_coef
 
         return loss
 
@@ -83,7 +83,7 @@ class BMC(BaseModel):
             self.temp_buffers + self.memory.buffers, self.minibatch_size
         )
 
-        optimizer = SGD(self.base_model.parameters(), lr=self.lr)
+        optimizer = AdamW(self.base_model.parameters(), lr=0.01)
         scheduler = ReduceLROnPlateau(
             optimizer, "min", threshold=1e-4, patience=10, verbose=False
         )
@@ -91,9 +91,9 @@ class BMC(BaseModel):
             self.base_model.train()
             for i, batch in enumerate(train_loader):
                 batch = {k: v.to(self.device) for k, v in batch.items()}
-                self.optimizer.zero_grad()
-                val_loss = self._cons_forward(**batch)
-                val_loss.backward()
+                optimizer.zero_grad()
+                loss = self._cons_forward(**batch)
+                loss.backward()
                 optimizer.step()
             self.base_model.eval()
             losses = []
@@ -137,8 +137,12 @@ class BMC(BaseModel):
             task_loss(
                 logits=logits,
                 y=labels,
-                task_offset=np.array([self.task_offset] * len(labels)),
-                task_len=np.array([self.task_len] * len(labels)),
+                task_offset=torch.tensor(
+                    [self.task_offset] * len(labels), device=logits.device
+                ),
+                task_len=torch.tensor(
+                    [self.task_len] * len(labels), device=logits.device
+                ),
             )
             * self.task_coef
         )
@@ -154,8 +158,7 @@ class BMC(BaseModel):
         return loss.item()
 
     def begin_task(self, train_loader, task_start_idx):
-        # breakpoint()
-        ds: Stream = train_loader.dataset
+        ds: AutoDS = train_loader.dataset
 
         self.task_len = ds.task_end_idxs[ds.task_id] - task_start_idx
 

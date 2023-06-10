@@ -56,31 +56,22 @@ def pair_wise_feat_loss(expert_feats, backbone_feats):
 
 
 def task_loss(logits, y, task_offset, task_len, reduction="mean", is_slice=True):
-    y_prime = copy.deepcopy(y)
+    # y_prime = copy.deepcopy(y)
     # this is mixed mask logits because it can include memory
     loss = 0
-    logit_label_pairs = slice_mixed_task_logits(logits, y_prime, task_offset, task_len)
-    for sliced_logits, sliced_y in logit_label_pairs:
-        loss += nn.functional.cross_entropy(
-            sliced_logits, sliced_y, reduction=reduction
-        )
-    return loss
-
-
-def slice_mixed_task_logits(logits, y, task_offset, task_len):
-    masked_logits = logits.clone()
     if task_offset.max() != task_offset.min():
         end_idx = task_offset.max() + task_len[task_offset.argmax()]
         start_idx = task_offset.min()
-        _y = copy.deepcopy(y)
-        return [(masked_logits[:, start_idx:end_idx], _y)]
+        y_prime = y
     else:
         _task_offset = task_offset[0].item()
         _task_len = task_len[0].item()
-
-        _y = copy.deepcopy(y) - _task_offset
-
-        return [(masked_logits[:, _task_offset : _task_offset + _task_len], _y)]
+        start_idx = _task_offset
+        end_idx = _task_offset + _task_len
+        y_prime = copy.deepcopy(y) - _task_offset
+    sliced_logits = logits[:, start_idx:end_idx]
+    loss = nn.functional.cross_entropy(sliced_logits, y_prime, reduction=reduction)
+    return loss
 
 
 def mask_mixed_task_logits(
@@ -101,38 +92,24 @@ def mask_mixed_task_logits(
     return masked_logits[mask]
 
 
-def mask_mixed_task_logits_end_idx_only(
-    logits,
-    task_offset,
-    task_len,
-    is_slice=False,
-):
-    task_end_idx = (task_offset + task_len).max().item()
-    if is_slice:
-        return logits[:, :task_end_idx]
-
-    logits[:, task_end_idx:] = float("-inf")
-    return logits
-
-
 def make_consolidation_dataloader(buffers, batch_size):
-    consolidation_dataset = ConcatDataset(buffers)
+    concat_datasets = ConcatDataset(buffers)
 
     # labels = np.arange(len(consolidation_dataset.datasets))
     labels = np.concatenate(
-        [cons_ds.y for cons_ds in consolidation_dataset.datasets]
+        [len(cons_ds.y) * [i] for i, cons_ds in enumerate(concat_datasets.datasets)]
     )
-    val_size = math.ceil(len(consolidation_dataset) * 0.2)
-    train_size = len(consolidation_dataset) - val_size
+    val_size = math.ceil(len(concat_datasets) * 0.2)
+    train_size = len(concat_datasets) - val_size
     consolidation_dataset, val_dataset = torch.utils.data.random_split(
-        consolidation_dataset,
+        concat_datasets,
         [train_size, val_size],
         generator=torch.Generator().manual_seed(42),
     )
-    labels = labels[consolidation_dataset.indices]
+    cons_labels = labels[consolidation_dataset.indices]
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False, sampler=None)
 
-    balanced_sampler = ImbalancedDatasetSampler(labels=labels)
+    balanced_sampler = ImbalancedDatasetSampler(labels=cons_labels)
     # NOTE shuffling happens inside the imbalanced dataset sampler
     cons_dataloader = DataLoader(
         consolidation_dataset,
