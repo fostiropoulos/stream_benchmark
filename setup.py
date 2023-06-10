@@ -7,8 +7,8 @@ setup(
     version="1.0",
     description="Stream Benchmark",
     author="Iordanis Fostiropoulos",
-    author_email="dev@iordanis.xyz",
-    url="https://iordanis.xyz/",
+    author_email="mail@iordanis.me",
+    url="https://iordanis.me/",
     python_requires=">3.10",
     long_description=open("README.md").read(),
     packages=find_packages(),
@@ -22,7 +22,7 @@ setup(
         "quadprog==0.1.11",
         "pandas==2.0.0",
         "tabulate==0.9.0",
-        "stream @ git+https://github.com/fostiropoulos/stream.git",
+        "autods==1.0",
     ],
     extras_require={
         "dev": [

@@ -9,7 +9,7 @@
 &nbsp;&nbsp;&nbsp;
 <a href="https://github.com/fostiropoulos/stream_benchmark">[Code]</a>
 &nbsp;&nbsp;&nbsp;
-<a href="https://github.com/fostiropoulos/stream">[Dataset]</a>
+<a href="https://github.com/fostiropoulos/auto-dataset">[Dataset]</a>
 </p>
 
 ## Abstract
@@ -53,13 +53,13 @@ The parallelism of this framework enables BMC to learn long task sequences effic
 
 ![Paralleled multi-expert training framework](https://drive.google.com/uc?export=view&id=1NAswFVQtiNn6xkilUig42guGfvi-babV)
 
-## The Stream Dataset
+## Auto-Dataset
 
-Stream dataset implements the logic for processing and managing a large sequence of datasets,
+AutoDS implements the logic for processing and managing a large sequence of datasets,
 and provides a method to train on interdisciplinary tasks by projecting all datasets on the same dimension,
 by extracting features from pre-trained models.
 
-See [the repository](https://github.com/fostiropoulos/stream/tree/cvpr_release) for Stream dataset installation and usages.
+See [the repository](https://github.com/fostiropoulos/auto-dataset/) for dataset installation and usages.
 
 Download the extracted features for Stream datasets [here](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view).
 
@@ -74,7 +74,7 @@ Our implementation of BMC as well as the baselines can be found [here](https://g
 
 ## Citation
 
-```
+```bibtex
 @inproceedings{fostiropoulos2023batch,
   title={Batch Model Consolidation: A Multi-Task Model Consolidation Framework},
   author={Fostiropoulos, Iordanis and Zhu, Jiaye and Itti, Laurent},

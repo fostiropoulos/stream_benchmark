@@ -4,7 +4,7 @@ The code was used for the experiments and results of
 **Batch-Model-Consolidation** [[arXiv]](https://openaccess.thecvf.com/content/CVPR2023/papers/Fostiropoulos_Batch_Model_Consolidation_A_Multi-Task_Model_Consolidation_Framework_CVPR_2023_paper.pdf) [[Website]](https://fostiropoulos.github.io/stream_benchmark/).
 If using this code please cite:
 
-```
+```bibtex
 @inproceedings{fostiropoulos2023batch,
   title={Batch Model Consolidation: A Multi-Task Model Consolidation Framework},
   author={Fostiropoulos, Iordanis and Zhu, Jiaye and Itti, Laurent},
@@ -13,22 +13,22 @@ If using this code please cite:
   year={2023}
 }
 ```
-This repository is a benchmark of methods found in [FACIL](https://github.com/mmasana/FACIL) and [Mammoth](https://github.com/aimagelab/mammoth) combined and adapted to work with the [Stream](https://github.com/fostiropoulos/stream) dataset.
+This repository is a benchmark of methods found in [FACIL](https://github.com/mmasana/FACIL) and [Mammoth](https://github.com/aimagelab/mammoth) combined and adapted to work with the [AutoDS](https://github.com/fostiropoulos/auto-dataset) dataset to evaluate methods on a long sequence of tasks.
 
 
 
 ## Install
 
-1. Install the [Stream dataset](https://github.com/fostiropoulos/stream).
+1. Install the [AutoDS dataset](https://github.com/fostiropoulos/auto-dataset).
 2. `git clone https://github.com/fostiropoulos/stream_benchmark.git`
 3. `cd stream_benchmark`
 4. `pip install . stream_benchmark`
 
 
-## Stream Feature Vectors [Download](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view)
+## AutoDS Feature Vectors [Download](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view)
 
 We use 71 datasets with extracted features from pre-trained models,
-supported in the Stream dataset. [The detailed table](https://github.com/fostiropoulos/stream/blob/cvpr_release/assets/DATASET_TABLE.md).
+supported in the AutoDS dataset. [The detailed table](https://github.com/fostiropoulos/auto-dataset/blob/cvpr_release/assets/DATASET_TABLE.md).
 
 ## Hyperparameters
 
@@ -57,12 +57,14 @@ For `model_name` support see below.
 `{num_gpus}` is the fractional number of GPU to use.
 Set this so that `{GPU usage per experiment} * {num_gpus} < 1`
 
+## Extending
 
+The code in [test_benchmark.py](tests/test_benchmark.py) would be a good starting point in a simple example (ignoring the mock.patching) in understanding how the benchmark can be extended.
 
 
 ## Methods implemented
-| Description                                                      | `model_name`                                                                                              | File                                                 |
-|:-----------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------|:-----------------------------------------------------|
+| Description                                                      | `model_name`                                                                                            | File                                                 |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ | :--------------------------------------------------- |
 | Continual learning via Gradient Episodic Memory.                 | [gem](https://arxiv.org/abs/1706.08840)                                                                 | [gem.py](stream_benchmark/models/gem.py)             |
 | Continual learning via online EWC.                               | [ewc_on](https://arxiv.org/pdf/1805.06370.pdf)                                                          | [ewc_on.py](stream_benchmark/models/ewc_on.py)       |
 | Continual learning via MAS.                                      | [mas](https://arxiv.org/abs/1711.09601)                                                                 | [mas.py](stream_benchmark/models/mas.py)             |
