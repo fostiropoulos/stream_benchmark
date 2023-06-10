@@ -66,7 +66,7 @@ class Logger:
     def __init__(
         self,
         path: str | Path | None = None,
-        verbose: bool = True,
+        verbose: bool = False,
         prefix: str | None = None,
     ):
         self.path = path
@@ -119,8 +119,8 @@ class Logger:
 
     def write_score(
         self,
-        acc_class_il,
-        acc_task_il,
+        mean_acc_class_il,
+        mean_acc_task_il,
         loss,
         task_name: str,
         task_num: int,
@@ -132,9 +132,6 @@ class Logger:
         :param task_number: task index
         :param setting: the setting of the benchmark
         """
-        mean_acc_class_il, mean_acc_task_il = np.mean(acc_class_il), np.mean(
-            acc_task_il
-        )
         msg = (
             f"{prefix} val-loss {loss:.2f} val-acc for task: {task_name} ({task_num}) - \t [Class-IL]: {round(mean_acc_class_il,2)} %"
             f" \t [Task-IL]: {round(mean_acc_task_il,2)} %"
