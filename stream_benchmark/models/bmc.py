@@ -106,9 +106,12 @@ class BMC(BaseModel):
             val_loss = np.mean(losses)
             scheduler.step(val_loss)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, in_task=False) -> torch.Tensor:
         # should be using base_model than net in evaluation
-        return self.base_model(x)
+        if in_task:
+            return self.net(x)
+        else:
+            return self.base_model(x)
 
     def end_task(self, train_loader: DataLoader, task_start_idx, *_):
         b = Buffer(

@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from stream_benchmark.datasets import SequentialStream
 from stream_benchmark.models.__base_model import BaseModel
+from stream_benchmark.models.bmc import BMC
 from stream_benchmark.utils.train import (
     Logger,
     mask_classes,
@@ -35,7 +36,10 @@ def evaluate(
                 inputs, labels = data
                 labels = labels + start_idx
                 inputs, labels = inputs.to(model.device), labels.to(model.device)
-                outputs = model(inputs)
+                if isinstance(model, BMC):
+                    outputs = model(inputs, last)
+                else:
+                    outputs = model(inputs)
                 losses.append(F.cross_entropy(outputs, labels).detach().cpu().numpy())
                 pred = torch.argmax(outputs.data, 1)
                 correct += torch.sum(pred == labels).item()
@@ -165,7 +169,12 @@ def train(
         )
 
         logger.write_score(
-            mean_cil_acc, mean_til_acc, val_loss, task_name, task_num, prefix="all-tasks"
+            mean_cil_acc,
+            mean_til_acc,
+            val_loss,
+            task_name,
+            task_num,
+            prefix="all-tasks",
         )
         if t < dataset.n_tasks - 1:
             dataset.inc_task()
