@@ -62,7 +62,7 @@ def task_loss(logits, y, task_offset, task_len, reduction="mean", is_slice=True)
     if task_offset.max() != task_offset.min():
         end_idx = task_offset.max() + task_len[task_offset.argmax()]
         start_idx = task_offset.min()
-        y_prime = y
+        y_prime = y - start_idx
     else:
         _task_offset = task_offset[0].item()
         _task_len = task_len[0].item()
