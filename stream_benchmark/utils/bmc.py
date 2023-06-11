@@ -55,7 +55,7 @@ def pair_wise_feat_loss(expert_feats, backbone_feats):
     return F.mse_loss(expert_feats[n], backbone_feats[n]).sum()
 
 
-def task_loss(logits, y, task_offset, task_len, reduction="mean", is_slice=True):
+def task_loss(logits, y, task_offset, task_len, reduction="mean"):
     # y_prime = copy.deepcopy(y)
     # this is mixed mask logits because it can include memory
     loss = 0
