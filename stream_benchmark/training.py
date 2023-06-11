@@ -11,7 +11,13 @@ from tqdm import tqdm
 
 from stream_benchmark.datasets import SequentialStream
 from stream_benchmark.models.__base_model import BaseModel
-from stream_benchmark.utils.train import Logger, mask_classes
+from stream_benchmark.models.bmc import BMC
+from stream_benchmark.utils.train import (
+    Logger,
+    mask_classes,
+    timeit,
+    reset_optim_scheduler,
+)
 
 
 def evaluate(
@@ -30,7 +36,10 @@ def evaluate(
                 inputs, labels = data
                 labels = labels + start_idx
                 inputs, labels = inputs.to(model.device), labels.to(model.device)
-                outputs = model(inputs)
+                if isinstance(model, BMC):
+                    outputs = model(inputs, last)
+                else:
+                    outputs = model(inputs)
                 losses.append(F.cross_entropy(outputs, labels).detach().cpu().numpy())
                 pred = torch.argmax(outputs.data, 1)
                 correct += torch.sum(pred == labels).item()
@@ -50,20 +59,6 @@ def evaluate(
     return cil_acc, til_acc, val_loss
 
 
-def timeit(func, *args, **kwargs):
-    start = time.time()
-    result = func(*args, **kwargs)
-    end = time.time()
-    return result, end - start
-
-
-def reset_optim_scheduler(model: BaseModel, patience, threshold, verbose=True):
-    model.reset_optim()
-    return ReduceLROnPlateau(
-        model.optimizer, "min", threshold=threshold, patience=patience, verbose=verbose
-    )
-
-
 def train(
     model: BaseModel,
     dataset: SequentialStream,
@@ -77,12 +72,13 @@ def train(
 ) -> None:
     model.net.to(model.device)
     chkpt = save_dir.joinpath("results.pt")
-    logger = Logger(path=save_dir.joinpath("train.log"), verbose=verbose)
+    logger = Logger(path=save_dir.joinpath("train.log"), verbose=not verbose)
     begin_task_duration = defaultdict(list)
     end_task_duration = defaultdict(list)
     observe_task_duration = defaultdict(lambda: defaultdict(list))
     cil_results = []
     til_results = []
+    mean_cil_acc = 0
     for t in range(dataset.task_id, dataset.n_tasks):
         model.net.train()
         train_loader = dataset.train_dataloader()
@@ -99,7 +95,6 @@ def train(
             model, scheduler_patience, scheduler_threshold, verbose=verbose
         )
         val_loss = float("inf")
-        mean_cil_acc = 0
         mean_til_acc = 0
         running_loss = []
         loader = None
@@ -138,11 +133,10 @@ def train(
 
             if model.name != "icarl" and model.name != "joint_gcl":
                 cil_acc, til_acc, val_loss = evaluate(model, dataset, last=True)
-                mean_cil_acc = np.mean(cil_acc)
                 mean_til_acc = np.mean(til_acc)
                 logger.write_score(
-                    cil_acc,
-                    til_acc,
+                    mean_cil_acc,
+                    mean_til_acc,
                     val_loss,
                     task_name,
                     task_num,
@@ -175,7 +169,12 @@ def train(
         )
 
         logger.write_score(
-            cil_acc, til_acc, val_loss, task_name, task_num, prefix="all-tasks"
+            mean_cil_acc,
+            mean_til_acc,
+            val_loss,
+            task_name,
+            task_num,
+            prefix="all-tasks",
         )
         if t < dataset.n_tasks - 1:
             dataset.inc_task()

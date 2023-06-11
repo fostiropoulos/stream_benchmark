@@ -38,7 +38,7 @@ Modify the file for the number of `n_epochs` you want to train and the `batch_si
 
 ## Run a single method
 
-```
+```bash
 python -m stream_benchmark --save_path {save_path} --dataset_path {dataset_path} --model_name {model_name} --hparams hparams/defaults.json
 ```
 
