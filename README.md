@@ -14,7 +14,7 @@ The repository contains a combination of the methods found in [FACIL](https://gi
 1. Install the [AutoDS dataset](https://github.com/fostiropoulos/auto-dataset).
 2. `git clone https://github.com/fostiropoulos/stream_benchmark.git`
 3. `cd stream_benchmark`
-4. `pip install . stream_benchmark`
+4. `pip install .`
 
 
 ## AutoDS Feature Vectors [Download](https://drive.google.com/file/d/1insLK3FoGw-UEQUNnhzyxsql7z28lplZ/view)
